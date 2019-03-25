@@ -1,0 +1,42 @@
+version: '3.6'
+services:
+
+  api:
+    build: "."
+    command: |
+      /scripts/wait-for-it.sh db:5432 -- bash -c '
+      sql-migrate up
+      echo migrations DONE
+      sqlboiler psql --add-global-variants -o ./generated-models
+      echo ORM code generation DONE
+      kata-payments-api'
+    links:
+      - db
+    ports:
+      - 36480:8080
+    environment:
+      DB_NAME: "dbname"
+      DB_HOST: "db"
+      DB_USER: "dbuser"
+      DB_PASS: "dbpass"
+      DB_PORT: "5432"
+    volumes:
+      - "./generated-models:/usr/bin/generated-models"
+  
+  db:
+    image: postgres:10.5
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: "dbname"
+      POSTGRES_USER: "dbuser"
+      POSTGRES_PASSWORD: "dbpass"
+
+  adminer:
+    image: adminer:4.2.5-standalone
+    restart: always
+    links:
+      - db
+    ports:
+      - 36409:8080

@@ -1,0 +1,8 @@
+[psql]
+  dbname = "dbname"
+  host   = "db"
+  port   = 5432
+  user   = "dbuser"
+  pass   = "dbpass"
+  sslmode = "disable"
+  blacklist = ["migrations"]

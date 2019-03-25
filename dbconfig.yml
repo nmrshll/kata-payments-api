@@ -1,0 +1,5 @@
+development:
+    dialect: postgres
+    datasource: postgres://dbuser:dbpass@db:5432/dbname?sslmode=disable
+    dir: /migrations
+    table: migrations

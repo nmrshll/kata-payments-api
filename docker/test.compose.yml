@@ -1,0 +1,34 @@
+version: '3.6'
+services:  
+  
+  test:
+    build:
+      context: "./.."
+      dockerfile: docker/test.Dockerfile
+    command: |
+      /scripts/wait-for-it.sh db:5432 --timeout=30 -- bash -c '
+      sql-migrate up
+      echo migrations DONE
+      sqlboiler psql --add-global-variants -o ./generated-models
+      echo ORM code generation DONE
+      go test -v ./...'
+    links:
+      - db
+    ports:
+      - 36480:8080
+    environment:
+      DB_NAME: "dbname"
+      DB_HOST: "db"
+      DB_USER: "dbuser"
+      DB_PASS: "dbpass"
+      DB_PORT: "5432"
+  
+  db:
+    image: postgres:10.5
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: "dbname"
+      POSTGRES_USER: "dbuser"
+      POSTGRES_PASSWORD: "dbpass"
