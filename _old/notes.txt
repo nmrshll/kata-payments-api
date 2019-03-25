@@ -1,4 +1,0 @@
-notes
-for testing
-	"github.com/stretchr/testify/assert"
-	"gopkg.in/jarcoal/httpmock.v1"
